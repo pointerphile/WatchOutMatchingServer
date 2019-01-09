@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.168
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WitchOutMatchingServer", "WitchOutMatchingServer\WitchOutMatchingServer.vcxproj", "{BDDC6CD2-1F9A-4FEA-BF4F-67E8F0D28773}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BDDC6CD2-1F9A-4FEA-BF4F-67E8F0D28773}.Debug|x64.ActiveCfg = Debug|x64
+		{BDDC6CD2-1F9A-4FEA-BF4F-67E8F0D28773}.Debug|x64.Build.0 = Debug|x64
+		{BDDC6CD2-1F9A-4FEA-BF4F-67E8F0D28773}.Debug|x86.ActiveCfg = Debug|Win32
+		{BDDC6CD2-1F9A-4FEA-BF4F-67E8F0D28773}.Debug|x86.Build.0 = Debug|Win32
+		{BDDC6CD2-1F9A-4FEA-BF4F-67E8F0D28773}.Release|x64.ActiveCfg = Release|x64
+		{BDDC6CD2-1F9A-4FEA-BF4F-67E8F0D28773}.Release|x64.Build.0 = Release|x64
+		{BDDC6CD2-1F9A-4FEA-BF4F-67E8F0D28773}.Release|x86.ActiveCfg = Release|Win32
+		{BDDC6CD2-1F9A-4FEA-BF4F-67E8F0D28773}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A7DB4CCB-1AA6-47B6-898C-412C62C734DB}
+	EndGlobalSection
+EndGlobal

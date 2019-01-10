@@ -5,10 +5,12 @@
 //4 Bytes	:	int, float, long
 //8 Bytes	:	long long
 namespace PP {
-#pragma pack(push, 1)
 	enum AdditionalPacketType : unsigned short {
 		TYPE_REQ_MATCHING = 6,
-		TYPE_ACK_MATCHING
+		TYPE_ACK_MATCHING_HOST,
+		TYPE_ACK_MATCHING_GUEST
 	};
+#pragma pack(push, 1)
+
 #pragma pack(pop)
 }

@@ -71,6 +71,10 @@ int PP::WitchOutMatchingServer::ProcessPacket() {
 		pSender->Broadcast(packetSend);														//PPSessionManager에 있는 모든 세션들을 순회하여 send를 실시함.
 		break;
 	}
+	case PP::PPAdditionalPacketType::TYPE_REQ_MATCHING: {
+		std::wcout << L"매칭 요청 들어옴" << std::endl;
+		break;
+	}
 	default:
 		//정의되지 않은 패킷 처리부입니다.
 		wcharBuf = (wchar_t*)&packetRecv;

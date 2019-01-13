@@ -1,15 +1,13 @@
 #pragma once
-#include "PPNode.h"
+#include "PPGroup.h"
 
 namespace PP {
 	class PPCompositeNode : public PP::PPNode {
-	private:
-		std::list<PP::PPNode*> listChildren;
+	public:
+		std::map<int, PP::PPGroup*> listChildren;
 	public:
 		PPCompositeNode();
 		virtual ~PPCompositeNode();
 	public :
-		void AddChild(PP::PPNode* child);
-		const std::list<PP::PPNode*>& GetChildren() const;
 	};
 }

@@ -11,10 +11,10 @@ namespace PP {
 		TYPE_ACK_MATCHING_GUEST
 	};
 #pragma pack(push, 1)
-	struct PacketReqMatching {
+	struct PPPacketReqMatching {
 		short iMaximumPlayer;
 	};
-	struct PacketAckMatchingGuest {
+	struct PPPacketAckMatchingGuest {
 		char charHostAddress[15];
 	};
 #pragma pack(pop)

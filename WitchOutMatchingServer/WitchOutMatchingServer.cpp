@@ -1,10 +1,13 @@
 #include "WitchOutMatchingServer.h"
 #include "../../libppnetwork/libppnetwork/PPRecvPacketPoolServer.h"						//서버 구동시 필요합니다. 싱글톤 객체.
 
+PP::PPSequence* PP::WitchOutMatchingServer::m_pHead = new PP::PPSequence;
+
 PP::WitchOutMatchingServer::WitchOutMatchingServer() {}
 PP::WitchOutMatchingServer::~WitchOutMatchingServer() {}
 
 int PP::WitchOutMatchingServer::Init() {
+	
 	m_pServer = GetServer();
 	m_pSender = GetSender();
 	m_pServer->SetPortNumber(10001);
@@ -72,7 +75,26 @@ int PP::WitchOutMatchingServer::ProcessPacket() {
 		break;
 	}
 	case PP::PPAdditionalPacketType::TYPE_REQ_MATCHING: {
+		PP::PPPacketReqMatching* ppacketPayload = (PP::PPPacketReqMatching*)packetRecv.m_Packet.m_Payload;
+		int iMaximumPlayer = ppacketPayload->iMaximumPlayer;
+
 		std::wcout << L"매칭 요청 들어옴" << std::endl;
+		
+		auto iter = m_pHead->listChildren.find(iMaximumPlayer);
+		if (iter == m_pHead->listChildren.end()) {
+			PP::PPGroup* pGroup = new PP::PPGroup;
+			pGroup->m_iMaximumPlayer = iMaximumPlayer;
+			pGroup->listSession.push_back(packetRecv.m_socketSession);
+			m_pHead->listChildren.insert(std::make_pair(iMaximumPlayer, pGroup));
+			std::wcout << L"새 그룹 생성" << std::endl;
+		}
+		else {
+			iter->second->listSession.push_back(packetRecv.m_socketSession);
+			if (iter->second->listSession.size() >= iMaximumPlayer) {
+				std::wcout << L"매칭 준비 완료" << std::endl;
+			}
+		}
+
 		break;
 	}
 	default:

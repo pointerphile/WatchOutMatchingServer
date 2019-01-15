@@ -1,18 +1,17 @@
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include "WitchOutMatchingServer.h"
 #include "../../libppnetwork/libppnetwork/PPRecvPacketPoolServer.h"						//서버 구동시 필요합니다. 싱글톤 객체.
-
-PP::PPSequence* PP::WitchOutMatchingServer::m_pHead = new PP::PPSequence;
 
 PP::WitchOutMatchingServer::WitchOutMatchingServer() {}
 PP::WitchOutMatchingServer::~WitchOutMatchingServer() {}
 
 int PP::WitchOutMatchingServer::Init() {
-	
+	m_pHead = new PP::PPSequence;
 	m_pServer = GetServer();
 	m_pSender = GetSender();
 	m_pServer->SetPortNumber(10001);
 	m_pServer->SetNumberOfThreads(2);
-	m_pServer->SetFP(WitchOutMatchingServer::ProcessPacket);
+	m_pServer->SetFP(std::bind(&WitchOutMatchingServer::ProcessPacket, this));
 	return 0;
 }
 
@@ -80,8 +79,9 @@ int PP::WitchOutMatchingServer::ProcessPacket() {
 
 		std::wcout << L"매칭 요청 들어옴" << std::endl;
 		
-		auto iter = m_pHead->listChildren.find(iMaximumPlayer);
-		if (iter == m_pHead->listChildren.end()) {
+		//최대 플레이 인원수와 맞는 방 탐색
+		auto iterGroup = m_pHead->listChildren.find(iMaximumPlayer);
+		if (iterGroup == m_pHead->listChildren.end()) {
 			PP::PPGroup* pGroup = new PP::PPGroup;
 			pGroup->m_iMaximumPlayer = iMaximumPlayer;
 			pGroup->listSession.push_back(packetRecv.m_socketSession);
@@ -89,9 +89,38 @@ int PP::WitchOutMatchingServer::ProcessPacket() {
 			std::wcout << L"새 그룹 생성" << std::endl;
 		}
 		else {
-			iter->second->listSession.push_back(packetRecv.m_socketSession);
-			if (iter->second->listSession.size() >= iMaximumPlayer) {
+			iterGroup->second->listSession.push_back(packetRecv.m_socketSession);
+			int iReturn;
+			int iNumOfHost = 1;
+			int iNumOfGuest = iMaximumPlayer - 1;
+			std::string strHostIPv4;
+			if (iterGroup->second->listSession.size() >= iMaximumPlayer) {
 				std::wcout << L"매칭 준비 완료" << std::endl;
+				std::wcout << L"호스트를 지정합니다." << std::endl;
+				SOCKET socketHost = iterGroup->second->listSession.front();
+				iterGroup->second->listSession.pop_front();
+				sockaddr_in saHost;
+				int iSizeOfsaHost = sizeof(saHost);
+				iReturn = getpeername(socketHost, (sockaddr*)&saHost, &iSizeOfsaHost);
+				strHostIPv4 = inet_ntoa(saHost.sin_addr);
+				packetSend.m_Mode = PP::PPPacketMode::SEND;
+				packetSend.m_Packet.m_Header.m_len = PACKET_HEADER_SIZE;
+				packetSend.m_Packet.m_Header.m_type = (PP::PPPacketType)PP::PPAdditionalPacketType::TYPE_ACK_MATCHING_HOST;
+				packetSend.m_socketSession = socketHost;
+				m_pSender->Send(packetSend);
+
+				std::wcout << L"게스트를 지정합니다." << std::endl;
+				packetSend = {};
+				SOCKET socketGuest = iterGroup->second->listSession.front();
+				PP::PPPacketAckMatchingGuest packetMatching = {};
+				iterGroup->second->listSession.pop_front();
+				memcpy(packetMatching.charHostAddress, strHostIPv4.c_str(), strHostIPv4.size());
+				memcpy(packetSend.m_Packet.m_Payload, &packetMatching, sizeof(packetMatching));
+				packetSend.m_Mode = PP::PPPacketMode::SEND;
+				packetSend.m_Packet.m_Header.m_len = PACKET_HEADER_SIZE + sizeof(packetMatching);
+				packetSend.m_Packet.m_Header.m_type = (PP::PPPacketType)PP::PPAdditionalPacketType::TYPE_ACK_MATCHING_GUEST;
+				packetSend.m_socketSession = socketGuest;
+				m_pSender->Send(packetSend);
 			}
 		}
 

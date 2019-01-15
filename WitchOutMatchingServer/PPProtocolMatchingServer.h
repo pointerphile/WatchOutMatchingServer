@@ -6,7 +6,7 @@
 //8 Bytes	:	long long
 namespace PP {
 	enum PPAdditionalPacketType : unsigned short {
-		TYPE_REQ_MATCHING = 6,
+		TYPE_REQ_MATCHING = 100,
 		TYPE_ACK_MATCHING_HOST,
 		TYPE_ACK_MATCHING_GUEST
 	};

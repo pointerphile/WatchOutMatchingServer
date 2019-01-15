@@ -16,7 +16,7 @@
 namespace PP {
 	class WitchOutMatchingServer {
 	public:
-		static PPSequence* m_pHead;
+		PPSequence* m_pHead;
 	public:
 		PPTCPIOCPServer* m_pServer;
 		PPSender* m_pSender;
@@ -28,6 +28,6 @@ namespace PP {
 		int Run();
 		int Release();
 	public:
-		static int ProcessPacket();
+		int ProcessPacket();
 	};
 }

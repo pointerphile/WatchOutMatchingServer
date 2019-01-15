@@ -73,6 +73,21 @@ int PP::WitchOutMatchingServer::ProcessPacket() {
 		pSender->Broadcast(packetSend);														//PPSessionManager에 있는 모든 세션들을 순회하여 send를 실시함.
 		break;
 	}
+	case PP::PPPacketType::TYPE_REQ_SOCKET: {
+		PP::PPPacketNoticeSession packetSession = {};
+		int iSizeOfPayload = sizeof(packetSession);
+		packetSession.m_socketSession = packetRecv.m_socketSession;
+		packetSend.m_socketSession = packetRecv.m_socketSession;
+		packetSend.m_Mode = PP::PPPacketMode::SEND;
+		memcpy(packetSend.m_Packet.m_Payload,												//패킷 적재부 작성
+			(void*)&packetSession, iSizeOfPayload);									//패킷 적재부에 memcpy로 적재할 구조체를 deep copy해서 입력하면 된다.		
+		packetSend.m_Packet.m_Header.m_len = PACKET_HEADER_SIZE + iSizeOfPayload;		//패킷 헤더길이 4바이트 + 적재부 길이를 합친 총 길이
+		packetSend.m_Packet.m_Header.m_type = PP::PPPacketType::TYPE_ACK_SOCKET;
+
+		pSender->Send(packetSend);
+		break;
+	}
+
 	case PP::PPAdditionalPacketType::TYPE_REQ_MATCHING: {
 		PP::PPPacketReqMatching* ppacketPayload = (PP::PPPacketReqMatching*)packetRecv.m_Packet.m_Payload;
 		int iMaximumPlayer = ppacketPayload->iMaximumPlayer;
@@ -87,6 +102,7 @@ int PP::WitchOutMatchingServer::ProcessPacket() {
 			pGroup->listSession.push_back(packetRecv.m_socketSession);
 			m_pHead->listChildren.insert(std::make_pair(iMaximumPlayer, pGroup));
 			std::wcout << L"새 그룹 생성" << std::endl;
+			break;
 		}
 		else {
 			iterGroup->second->listSession.push_back(packetRecv.m_socketSession);
@@ -95,7 +111,7 @@ int PP::WitchOutMatchingServer::ProcessPacket() {
 			int iNumOfGuest = iMaximumPlayer - 1;
 			std::string strHostIPv4;
 			if (iterGroup->second->listSession.size() >= iMaximumPlayer) {
-				std::wcout << L"매칭 준비 완료" << std::endl;
+				std::wcout << L"그룹 찾음" << std::endl;
 				std::wcout << L"호스트를 지정합니다." << std::endl;
 				SOCKET socketHost = iterGroup->second->listSession.front();
 				iterGroup->second->listSession.pop_front();
@@ -122,9 +138,8 @@ int PP::WitchOutMatchingServer::ProcessPacket() {
 				packetSend.m_socketSession = socketGuest;
 				m_pSender->Send(packetSend);
 			}
+			break;
 		}
-
-		break;
 	}
 	default:
 		//정의되지 않은 패킷 처리부입니다.

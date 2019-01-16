@@ -1,21 +1,21 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
-#include "WitchOutMatchingServer.h"
+#include "WatchOutMatchingServer.h"
 #include "../../libppnetwork/libppnetwork/PPRecvPacketPoolServer.h"						//서버 구동시 필요합니다. 싱글톤 객체.
 
-PP::WitchOutMatchingServer::WitchOutMatchingServer() {}
-PP::WitchOutMatchingServer::~WitchOutMatchingServer() {}
+PP::WatchOutMatchingServer::WatchOutMatchingServer() {}
+PP::WatchOutMatchingServer::~WatchOutMatchingServer() {}
 
-int PP::WitchOutMatchingServer::Init() {
+int PP::WatchOutMatchingServer::Init() {
 	m_pHead = new PP::PPSequence;
 	m_pServer = GetServer();
 	m_pSender = GetSender();
 	m_pServer->SetPortNumber(10001);
 	m_pServer->SetNumberOfThreads(2);
-	m_pServer->SetFP(std::bind(&WitchOutMatchingServer::ProcessPacket, this));
+	m_pServer->SetFP(std::bind(&WatchOutMatchingServer::ProcessPacket, this));
 	return 0;
 }
 
-int PP::WitchOutMatchingServer::Run() {
+int PP::WatchOutMatchingServer::Run() {
 	m_pServer->Startup();
 	while (true) {
 		Sleep(1000);
@@ -23,14 +23,14 @@ int PP::WitchOutMatchingServer::Run() {
 	return 0;
 }
 
-int PP::WitchOutMatchingServer::Release() {
+int PP::WatchOutMatchingServer::Release() {
 	m_pServer->Release();
 	delete m_pServer;
 	delete m_pSender;
 	return 0;
 }
 
-int PP::WitchOutMatchingServer::ProcessPacket() {
+int PP::WatchOutMatchingServer::ProcessPacket() {
 	//패킷을 라이브러리 외부에서 처리하는 함수입니다.
 	//서버 객체에서 Startup 실행 전 SetFP()를 실행해야 합니다.
 	//std::wcout << "injected ProcessServerPacket()..." << std::endl;

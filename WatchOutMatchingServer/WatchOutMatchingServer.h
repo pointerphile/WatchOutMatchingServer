@@ -14,15 +14,15 @@
 #endif // DEBUG
 
 namespace PP {
-	class WitchOutMatchingServer {
+	class WatchOutMatchingServer {
 	public:
 		PPSequence* m_pHead;
 	public:
 		PPTCPIOCPServer* m_pServer;
 		PPSender* m_pSender;
 	public:
-		WitchOutMatchingServer();
-		~WitchOutMatchingServer();
+		WatchOutMatchingServer();
+		~WatchOutMatchingServer();
 	public:
 		int Init();
 		int Run();

@@ -30,7 +30,7 @@
     <ClCompile Include="PPSequence.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WitchOutMatchingServer.cpp">
+    <ClCompile Include="WatchOutMatchingServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -50,7 +50,7 @@
     <ClInclude Include="PPSequence.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WitchOutMatchingServer.h">
+    <ClInclude Include="WatchOutMatchingServer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

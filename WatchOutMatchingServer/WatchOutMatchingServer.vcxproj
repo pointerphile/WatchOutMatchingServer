@@ -23,6 +23,7 @@
     <ProjectGuid>{BDDC6CD2-1F9A-4FEA-BF4F-67E8F0D28773}</ProjectGuid>
     <RootNamespace>WitchOutMatchingServer</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <ProjectName>WatchOutMatchingServer</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -125,7 +126,7 @@
     <ClCompile Include="PPGroup.cpp" />
     <ClCompile Include="PPNode.cpp" />
     <ClCompile Include="PPSequence.cpp" />
-    <ClCompile Include="WitchOutMatchingServer.cpp" />
+    <ClCompile Include="WatchOutMatchingServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PPCompositeNode.h" />
@@ -133,7 +134,7 @@
     <ClInclude Include="PPNode.h" />
     <ClInclude Include="PPProtocolMatchingServer.h" />
     <ClInclude Include="PPSequence.h" />
-    <ClInclude Include="WitchOutMatchingServer.h" />
+    <ClInclude Include="WatchOutMatchingServer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

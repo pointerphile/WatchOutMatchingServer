@@ -35,8 +35,8 @@ int PP::WatchOutMatchingServer::ProcessPacket() {
 	//서버 객체에서 Startup 실행 전 SetFP()를 실행해야 합니다.
 	//std::wcout << "injected ProcessServerPacket()..." << std::endl;
 	PP::PPSender* pSender = PP::GetSender();
-	PP::PPPacketForProcess packetRecv;
-	PP::PPPacketForProcess packetSend;
+	PP::PPPacketForProcess packetRecv = {};
+	PP::PPPacketForProcess packetSend = {};
 	//IOCP 스레드에서 넣엇던 패킷을 담은 패킷풀 접근
 	packetRecv = PP::PPRecvPacketPoolServer::GetInstance().front();
 	//패킷풀 맨 앞 pop()
@@ -105,13 +105,14 @@ int PP::WatchOutMatchingServer::ProcessPacket() {
 			break;
 		}
 		else {
+			std::wcout << L"그룹 찾음" << std::endl;
 			iterGroup->second->listSession.push_back(packetRecv.m_socketSession);
 			int iReturn;
 			int iNumOfHost = 1;
 			int iNumOfGuest = iMaximumPlayer - 1;
 			std::string strHostIPv4;
 			if (iterGroup->second->listSession.size() >= iMaximumPlayer) {
-				std::wcout << L"그룹 찾음" << std::endl;
+				std::wcout << L"매칭 시도" << std::endl;
 				std::wcout << L"호스트를 지정합니다." << std::endl;
 				SOCKET socketHost = iterGroup->second->listSession.front();
 				iterGroup->second->listSession.pop_front();
@@ -123,20 +124,30 @@ int PP::WatchOutMatchingServer::ProcessPacket() {
 				packetSend.m_Packet.m_Header.m_len = PACKET_HEADER_SIZE;
 				packetSend.m_Packet.m_Header.m_type = (PP::PPPacketType)PP::PPAdditionalPacketType::TYPE_ACK_MATCHING_HOST;
 				packetSend.m_socketSession = socketHost;
-				m_pSender->Send(packetSend);
+				iReturn = m_pSender->Send(packetSend);
+				Sleep(1);
+				if (iReturn != 0) {
+					std::wcout << L"호스트 지정 실패" << std::endl;
+					break;
+				}
 
-				std::wcout << L"게스트를 지정합니다." << std::endl;
-				packetSend = {};
-				SOCKET socketGuest = iterGroup->second->listSession.front();
-				PP::PPPacketAckMatchingGuest packetMatching = {};
-				iterGroup->second->listSession.pop_front();
-				memcpy(packetMatching.charHostAddress, strHostIPv4.c_str(), strHostIPv4.size());
-				memcpy(packetSend.m_Packet.m_Payload, &packetMatching, sizeof(packetMatching));
-				packetSend.m_Mode = PP::PPPacketMode::SEND;
-				packetSend.m_Packet.m_Header.m_len = PACKET_HEADER_SIZE + sizeof(packetMatching);
-				packetSend.m_Packet.m_Header.m_type = (PP::PPPacketType)PP::PPAdditionalPacketType::TYPE_ACK_MATCHING_GUEST;
-				packetSend.m_socketSession = socketGuest;
-				m_pSender->Send(packetSend);
+				while (iNumOfGuest != 0) {
+					std::wcout << L"게스트를 지정합니다." << std::endl;
+					packetSend = {};
+					SOCKET socketGuest = iterGroup->second->listSession.front();
+					PP::PPPacketAckMatchingGuest packetMatching = {};
+					iterGroup->second->listSession.pop_front();
+					memcpy(packetMatching.charHostAddress, strHostIPv4.c_str(), strHostIPv4.size());
+					memcpy(packetSend.m_Packet.m_Payload, &packetMatching, sizeof(packetMatching));
+					packetSend.m_Mode = PP::PPPacketMode::SEND;
+					packetSend.m_Packet.m_Header.m_len = PACKET_HEADER_SIZE + sizeof(packetMatching);
+					packetSend.m_Packet.m_Header.m_type = (PP::PPPacketType)PP::PPAdditionalPacketType::TYPE_ACK_MATCHING_GUEST;
+					packetSend.m_socketSession = socketGuest;
+					iReturn = m_pSender->Send(packetSend);
+
+					iNumOfGuest--;
+				}
+				
 			}
 			break;
 		}

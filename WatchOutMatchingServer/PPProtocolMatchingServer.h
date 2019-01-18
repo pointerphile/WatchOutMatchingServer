@@ -8,7 +8,9 @@ namespace PP {
 	enum PPAdditionalPacketType : unsigned short {
 		TYPE_REQ_MATCHING = 100,
 		TYPE_ACK_MATCHING_HOST,
-		TYPE_ACK_MATCHING_GUEST
+		TYPE_ACK_MATCHING_GUEST,
+		TYPE_REJ_MATCHING_HOST,
+		TYPE_REJ_MATCHING_GUEST
 	};
 #pragma pack(push, 1)
 	struct PPPacketReqMatching {

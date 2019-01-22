@@ -22,6 +22,6 @@ namespace PP {
 		int Release();
 	public:
 		int DisplayError(const SQLWCHAR * wcharParam, SQLSMALLINT sParam, SQLHANDLE hParam);
-		int SignIn(const SQLWCHAR* wcharUsername, const SQLWCHAR* wcharPassword);
+		int SignIn(std::wstring wstrUsername, std::wstring wstrPassword);
 	};
 }

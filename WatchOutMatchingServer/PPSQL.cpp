@@ -13,7 +13,7 @@ int PP::PPSQL::Init() {
 	if (SQLAllocHandle(SQL_HANDLE_DBC, m_hEnv, &m_hDBC) != SQL_SUCCESS)
 		return -1;
 
-	m_wstrInCon = L"Driver={SQL Server}; SERVER=127.0.0.1, 1433; DATABASE=testDB; Network=dbmssocn; UID=sa; PWD=kgca!@3;";
+	m_wstrInCon = L"Driver={SQL Server}; SERVER=127.0.0.1, 1433; DATABASE=testDB; Network=dbmssocn; UID=sa; PWD=kgca!@34;";
 	iReturn = SQLDriverConnectW(m_hDBC, NULL, (SQLWCHAR*)m_wstrInCon.c_str(), (SQLSMALLINT)m_wstrInCon.length(), m_wcharOutCon,
 		_countof(m_wcharOutCon), &m_sSizeOutCon, SQL_DRIVER_NOPROMPT);
 	if ((iReturn != SQL_SUCCESS) && (iReturn != SQL_SUCCESS_WITH_INFO)) {
@@ -52,6 +52,22 @@ int PP::PPSQL::DisplayError(const SQLWCHAR * wcharParam, SQLSMALLINT sParam, SQL
 	return 0;
 }
 
-int PP::PPSQL::SignIn(const SQLWCHAR * wcharUsername, const SQLWCHAR * wcharPassword) {
+int PP::PPSQL::SignIn(std::wstring wstrUsername, std::wstring wstrPassword) {
+	int iReturn = 0;
+	SWORD sReturn = 0;
+	SQLLEN lUsername = SQL_NTS;
+	SQLLEN lPassword = SQL_NTS;
+
+	SQLBindParameter(m_hSTMT, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WVARCHAR, 16, 0, &wstrUsername, wstrUsername.length(), &lUsername);
+	SQLBindParameter(m_hSTMT, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WVARCHAR, 16, 0, &wstrPassword, wstrPassword.length(), &lPassword);
+	SQLBindParameter(m_hSTMT, 3, SQL_PARAM_OUTPUT, SQL_C_SSHORT, SQL_INTEGER, 0, 0, &sReturn, 0, nullptr);
+	iReturn = SQLExecDirectW(m_hSTMT, (SQLWCHAR *)L"{CALL usp_SignIn (?, ?, ?)}", SQL_NTS);
+	if ((iReturn != SQL_SUCCESS) && (iReturn != SQL_SUCCESS_WITH_INFO)) {
+		std::cout << "Failed... " << std::endl;
+		return iReturn;
+	}
+	if (sReturn != 0) {
+		std::cout << "Check your Username and Password again. " << std::endl;
+	}
 	return 0;
 }

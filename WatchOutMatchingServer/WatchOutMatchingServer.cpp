@@ -6,12 +6,18 @@ PP::WatchOutMatchingServer::WatchOutMatchingServer() {}
 PP::WatchOutMatchingServer::~WatchOutMatchingServer() {}
 
 int PP::WatchOutMatchingServer::Init() {
+	int iReturn = 0;
+
 	m_pHead = new PP::PPSequence;
 	m_pServer = GetServer();
 	m_pSender = GetSender();
 	m_pServer->SetPortNumber(10001);
 	m_pServer->SetNumberOfThreads(2);
 	m_pServer->SetFP(std::bind(&WatchOutMatchingServer::ProcessPacket, this));
+	iReturn = m_SQL.Init();
+	if (iReturn != 0) {
+		return -1;
+	}
 	return 0;
 }
 

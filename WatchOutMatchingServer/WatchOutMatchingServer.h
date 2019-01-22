@@ -6,6 +6,7 @@
 #include "PPProtocolMatchingServer.h"
 #include "PPSequence.h"
 #include "PPGroup.h"
+#include "PPSQL.h"
 
 #ifdef _DEBUG
 #pragma comment(lib, "../../libppnetwork/x64/Debug/libppnetwork_d.lib")					//서버 라이브러리의 lib 로드. 실행시 libppnetwork.dll이 반드시 필요합니다.
@@ -15,6 +16,8 @@
 
 namespace PP {
 	class WatchOutMatchingServer {
+	private:
+		PPSQL m_SQL;
 	public:
 		PPSequence* m_pHead;
 	public:

@@ -43,7 +43,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -126,6 +126,7 @@
     <ClCompile Include="PPGroup.cpp" />
     <ClCompile Include="PPNode.cpp" />
     <ClCompile Include="PPSequence.cpp" />
+    <ClCompile Include="PPSQL.cpp" />
     <ClCompile Include="WatchOutMatchingServer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -134,6 +135,7 @@
     <ClInclude Include="PPNode.h" />
     <ClInclude Include="PPProtocolMatchingServer.h" />
     <ClInclude Include="PPSequence.h" />
+    <ClInclude Include="PPSQL.h" />
     <ClInclude Include="WatchOutMatchingServer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

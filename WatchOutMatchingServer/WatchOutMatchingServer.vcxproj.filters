@@ -33,6 +33,9 @@
     <ClCompile Include="WatchOutMatchingServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PPSQL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PPCompositeNode.h">
@@ -51,6 +54,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WatchOutMatchingServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PPSQL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

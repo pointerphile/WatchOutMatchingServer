@@ -58,8 +58,8 @@ int PP::PPSQL::SignIn(std::wstring wstrUsername, std::wstring wstrPassword) {
 	SQLLEN lUsername = SQL_NTS;
 	SQLLEN lPassword = SQL_NTS;
 
-	SQLBindParameter(m_hSTMT, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WVARCHAR, 16, 0, &wstrUsername, wstrUsername.length(), &lUsername);
-	SQLBindParameter(m_hSTMT, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WVARCHAR, 16, 0, &wstrPassword, wstrPassword.length(), &lPassword);
+	SQLBindParameter(m_hSTMT, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WVARCHAR, 16, 0, (SQLPOINTER)wstrUsername.c_str(), wstrUsername.length()-1, &lUsername);
+	SQLBindParameter(m_hSTMT, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WVARCHAR, 16, 0, (SQLPOINTER)wstrPassword.c_str(), wstrPassword.length()-1, &lPassword);
 	SQLBindParameter(m_hSTMT, 3, SQL_PARAM_OUTPUT, SQL_C_SSHORT, SQL_INTEGER, 0, 0, &sReturn, 0, nullptr);
 	iReturn = SQLExecDirectW(m_hSTMT, (SQLWCHAR *)L"{CALL usp_SignIn (?, ?, ?)}", SQL_NTS);
 	if ((iReturn != SQL_SUCCESS) && (iReturn != SQL_SUCCESS_WITH_INFO)) {
@@ -68,6 +68,7 @@ int PP::PPSQL::SignIn(std::wstring wstrUsername, std::wstring wstrPassword) {
 	}
 	if (sReturn != 0) {
 		std::cout << "Check your Username and Password again. " << std::endl;
+		return sReturn;
 	}
 	return 0;
 }

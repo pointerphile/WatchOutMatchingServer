@@ -159,6 +159,32 @@ int PP::WatchOutMatchingServer::ProcessPacket() {
 			break;
 		}
 	}
+	case PP::PPAdditionalPacketType::TYPE_REQ_SIGN_IN: {
+		std::wcout << L"로그인 요청 들어옴" << std::endl;
+		SOCKET iSocket = packetRecv.m_socketSession;
+		PP::PPPacketReqSignIn* ppacketReqSignIn = (PP::PPPacketReqSignIn*)packetRecv.m_Packet.m_Payload;
+		PP::PPPacketAckSignIn packetAckSignIn = {};
+		short sSQLReturn = 0;
+		int iPayload = sizeof(packetAckSignIn);
+		
+		std::wcout << ppacketReqSignIn->m_wcharUsername << L", " << ppacketReqSignIn->m_wcharPassword << std::endl;;
+		sSQLReturn = m_SQL.SignIn(ppacketReqSignIn->m_wcharUsername, ppacketReqSignIn->m_wcharPassword);
+		if (sSQLReturn == 0) {
+			packetAckSignIn.m_sSignIn = 0;
+		}
+		else {
+			packetAckSignIn.m_sSignIn = 1;
+		}
+
+		packetSend.m_Mode = PP::PPPacketMode::SEND;
+		packetSend.m_Packet.m_Header.m_len = PACKET_HEADER_SIZE +iPayload;
+		packetSend.m_Packet.m_Header.m_type = (PP::PPPacketType)PP::PPAdditionalPacketType::TYPE_ACK_SIGN_IN;
+		memcpy(packetSend.m_Packet.m_Payload, &packetAckSignIn, iPayload);
+		packetSend.m_socketSession = iSocket;
+		pSender->Send(packetSend);
+
+		break;
+	}
 	default:
 		//정의되지 않은 패킷 처리부입니다.
 		wcharBuf = (wchar_t*)&packetRecv;

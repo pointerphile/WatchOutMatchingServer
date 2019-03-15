@@ -159,6 +159,31 @@ int PP::WatchOutMatchingServer::ProcessPacket() {
 			break;
 		}
 	}
+	case PP::PPAdditionalPacketType::TYPE_REQ_SIGN_UP: {
+		std::wcout << L"가입 요청 들어옴" << std::endl;
+		SOCKET iSocket = packetRecv.m_socketSession;
+		PP::PPPacketReqSignUp* ppacketReqSignUp = (PP::PPPacketReqSignUp*)packetRecv.m_Packet.m_Payload;
+		PP::PPPacketAckSignUp packetAckSignUp = {};
+		short sSQLReturn = 0;
+		int iPayload = sizeof(packetAckSignUp);
+
+		std::wcout << ppacketReqSignUp->m_wcharUsername << L", " << ppacketReqSignUp->m_wcharPassword << std::endl;;
+		sSQLReturn = m_SQL.SignUp(ppacketReqSignUp->m_wcharUsername, ppacketReqSignUp->m_wcharPassword);
+		if (sSQLReturn == 0) {
+			packetAckSignUp.m_sReturn = 0;
+		}
+		else {
+			packetAckSignUp.m_sReturn = 1;
+		}
+
+		packetSend.m_Mode = PP::PPPacketMode::SEND;
+		packetSend.m_Packet.m_Header.m_len = PACKET_HEADER_SIZE + iPayload;
+		packetSend.m_Packet.m_Header.m_type = (PP::PPPacketType)PP::PPAdditionalPacketType::TYPE_ACK_SIGN_UP;
+		memcpy(packetSend.m_Packet.m_Payload, &packetAckSignUp, iPayload);
+		packetSend.m_socketSession = iSocket;
+		pSender->Send(packetSend);
+		break;
+	}
 	case PP::PPAdditionalPacketType::TYPE_REQ_SIGN_IN: {
 		std::wcout << L"로그인 요청 들어옴" << std::endl;
 		SOCKET iSocket = packetRecv.m_socketSession;
@@ -166,20 +191,46 @@ int PP::WatchOutMatchingServer::ProcessPacket() {
 		PP::PPPacketAckSignIn packetAckSignIn = {};
 		short sSQLReturn = 0;
 		int iPayload = sizeof(packetAckSignIn);
-		
+
 		std::wcout << ppacketReqSignIn->m_wcharUsername << L", " << ppacketReqSignIn->m_wcharPassword << std::endl;;
 		sSQLReturn = m_SQL.SignIn(ppacketReqSignIn->m_wcharUsername, ppacketReqSignIn->m_wcharPassword);
 		if (sSQLReturn == 0) {
-			packetAckSignIn.m_sSignIn = 0;
+			packetAckSignIn.m_sReturn = 0;
 		}
 		else {
-			packetAckSignIn.m_sSignIn = 1;
+			packetAckSignIn.m_sReturn = 1;
 		}
 
 		packetSend.m_Mode = PP::PPPacketMode::SEND;
-		packetSend.m_Packet.m_Header.m_len = PACKET_HEADER_SIZE +iPayload;
+		packetSend.m_Packet.m_Header.m_len = PACKET_HEADER_SIZE + iPayload;
 		packetSend.m_Packet.m_Header.m_type = (PP::PPPacketType)PP::PPAdditionalPacketType::TYPE_ACK_SIGN_IN;
 		memcpy(packetSend.m_Packet.m_Payload, &packetAckSignIn, iPayload);
+		packetSend.m_socketSession = iSocket;
+		pSender->Send(packetSend);
+
+		break;
+	}
+	case PP::PPAdditionalPacketType::TYPE_REQ_UPDATE_USERNAME: {
+		std::wcout << L"계정명 변경 요청 들어옴" << std::endl;
+		SOCKET iSocket = packetRecv.m_socketSession;
+		PP::PPPacketReqUpdateUsername* ppacketReqSignIn = (PP::PPPacketReqUpdateUsername*)packetRecv.m_Packet.m_Payload;
+		PP::PPPacketAckQuery packetAckQuery = {};
+		short sSQLReturn = 0;
+		int iPayload = sizeof(packetAckQuery);
+
+		std::wcout << ppacketReqSignIn->m_wcharUsername << L", " << ppacketReqSignIn->m_wcharNewUsername << std::endl;;
+		sSQLReturn = m_SQL.UpdateUsername(ppacketReqSignIn->m_wcharUsername, ppacketReqSignIn->m_wcharNewUsername);
+		if (sSQLReturn == 0) {
+			packetAckQuery.m_sReturn = 0;
+		}
+		else {
+			packetAckQuery.m_sReturn = 1;
+		}
+
+		packetSend.m_Mode = PP::PPPacketMode::SEND;
+		packetSend.m_Packet.m_Header.m_len = PACKET_HEADER_SIZE + iPayload;
+		packetSend.m_Packet.m_Header.m_type = (PP::PPPacketType)PP::PPAdditionalPacketType::TYPE_ACK_UPDATE_USERNAME;
+		memcpy(packetSend.m_Packet.m_Payload, &packetAckQuery, iPayload);
 		packetSend.m_socketSession = iSocket;
 		pSender->Send(packetSend);
 
